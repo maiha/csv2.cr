@@ -1,7 +1,8 @@
 # csv2.cr [![Build Status](https://travis-ci.org/maiha/csv2.cr.svg?branch=master)](https://travis-ci.org/maiha/csv2.cr)
 
 A monkey patch for `CSV`(stdlib) to provide `quote_always` in CSV.build.
-Since this is a temporary repository before creating PR, we simply name `CSV2`.
+Since this is a temporary repository before merging PR, we simply name `CSV2`.
+https://github.com/crystal-lang/crystal/pull/6723
 
 - crystal: 0.26.1
 
