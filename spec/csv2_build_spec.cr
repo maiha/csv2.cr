@@ -127,12 +127,7 @@ describe CSV2 do
 
     it "builds with quote_always" do
       string = CSV2.build(quote_always: true) do |csv|
-        csv.row do |row|
-          row << 1
-          row << "doesn't"
-          row << " , "
-          row << %(he said "no")
-        end
+        csv.row 1, "doesn't", " , ", %(he said "no")
       end
       string.should eq(%("1","doesn't"," , ","he said ""no"""\n))
     end

@@ -22,10 +22,7 @@ dependencies:
 
 ```crystal
 CSV.build do |csv|
-  csv.row do |row|
-    row << 1
-    row << "doesn't"
-  end
+  csv.row 1, "doesn't"
 end
 ```
 
@@ -37,10 +34,7 @@ end
 
 ```crystal
 CSV2.build(quote_always: true) do |csv|
-  csv.row do |row|
-    row << 1
-    row << "doesn't"
-  end
+  csv.row 1, "doesn't"
 end
 ```
 
