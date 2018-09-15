@@ -33,3 +33,10 @@ version:
 .PHONY : bump
 bump:
 	make version VERSION=$(GUESSED_VERSION) -s
+
+.PHONY : rename
+rename:
+	for file in `find src -name '*.cr'`; do \
+	  sed -i -e 's/CSV::/CSV2::/g' $$file; \
+	  sed -i -e 's/CSV$$/CSV2/g' $$file; \
+	done 

@@ -1,4 +1,4 @@
-# Provides methods and classes for parsing and generating CSV
+# Provides methods and classes for parsing and generating CSV2
 # (comma-separated values) strings.
 #
 # This module conforms to [RFC 4180](https://tools.ietf.org/html/rfc4180).
@@ -111,16 +111,25 @@ class CSV2
 
   # Builds a CSV. This yields a `CSV2::Builder` to the given block.
   #
+  # Takes optional *quoting* argument to define quote behavior.
+  #
   # ```
   # result = CSV.build do |csv|
   #   csv.row "one", "two"
   #   csv.row "three"
   # end
   # result # => "one,two\nthree\n"
+  # result = CSV.build(quoting: CSV2::Builder::Quoting::ALL) do |csv|
+  #   csv.row "one", "two"
+  #   csv.row "three"
+  # end
+  # result # => "\"one\",\"two\"\n\"three\"\n"
   # ```
-  def self.build(separator : Char = DEFAULT_SEPARATOR, quote_char : Char = DEFAULT_QUOTE_CHAR, quote_always : Bool = false) : String
+  #
+  # See: `CSV2::Builder::Quoting`
+  def self.build(separator : Char = DEFAULT_SEPARATOR, quote_char : Char = DEFAULT_QUOTE_CHAR, quoting : Builder::Quoting = Builder::Quoting::RFC) : String
     String.build do |io|
-      build(io, separator, quote_char, quote_always) { |builder| yield builder }
+      build(io, separator, quote_char, quoting) { |builder| yield builder }
     end
   end
 
@@ -136,8 +145,8 @@ class CSV2
   # end
   # io.to_s # => "HEADER\none,two\nthree\n"
   # ```
-  def self.build(io : IO, separator : Char = DEFAULT_SEPARATOR, quote_char : Char = DEFAULT_QUOTE_CHAR, quote_always : Bool = false)
-    builder = Builder.new(io, separator, quote_char, quote_always)
+  def self.build(io : IO, separator : Char = DEFAULT_SEPARATOR, quote_char : Char = DEFAULT_QUOTE_CHAR, quoting : Builder::Quoting = Builder::Quoting::RFC)
+    builder = Builder.new(io, separator, quote_char, quoting)
     yield builder
   end
 
@@ -419,4 +428,4 @@ class CSV2
   end
 end
 
-require "./csv2/**"
+require "./csv/**"

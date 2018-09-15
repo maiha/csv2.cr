@@ -1,3 +1,5 @@
+require "csv"
+
 class CSV2
   # Raises when an error related to a CSV is found.
   class Error < Exception

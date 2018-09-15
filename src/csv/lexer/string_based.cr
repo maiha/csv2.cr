@@ -1,3 +1,5 @@
+require "csv"
+
 # :nodoc:
 class CSV2::Lexer::StringBased < CSV2::Lexer
   def initialize(string, separator = DEFAULT_SEPARATOR, quote_char = DEFAULT_QUOTE_CHAR)

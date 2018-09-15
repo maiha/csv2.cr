@@ -19,28 +19,18 @@ dependencies:
 
 ## Usage
 
-#### `CSV`(stdlib)
-
 ```crystal
-CSV.build do |csv|
-  csv.row 1, "doesn't"
-end
+puts CSV2.build {|csv| csv.row 1, ","}
+puts CSV2.build(quoting: CSV2::Builder::Quoting::NONE) {|csv| csv.row 1, ","}
+puts CSV2.build(quoting: CSV2::Builder::Quoting::RFC ) {|csv| csv.row 1, ","}
+puts CSV2.build(quoting: CSV2::Builder::Quoting::ALL ) {|csv| csv.row 1, ","}
 ```
 
 ```
-1,doesn't
-```
-
-#### `CSV2`
-
-```crystal
-CSV2.build(quote_always: true) do |csv|
-  csv.row 1, "doesn't"
-end
-```
-
-```
-"1","doesn't"
+1,","
+1,,
+1,","
+"1",","
 ```
 
 ## Contributing

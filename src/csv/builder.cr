@@ -1,3 +1,5 @@
+require "csv"
+
 # A CSV Builder writes CSV to an `IO`.
 #
 # ```
@@ -33,15 +35,21 @@
 # 4,5,6,7,8
 # ```
 class CSV2::Builder
+  enum Quoting
+    NONE # No quotes
+    RFC  # Quotes according to RFC 4180 (default)
+    ALL  # Always quote
+  end
+
   # Creates a builder that will write to the given `IO`.
-  def initialize(@io : IO, @separator : Char = DEFAULT_SEPARATOR, @quote_char : Char = DEFAULT_QUOTE_CHAR, @quote_always : Bool = false)
+  def initialize(@io : IO, @separator : Char = DEFAULT_SEPARATOR, @quote_char : Char = DEFAULT_QUOTE_CHAR, @quoting : Quoting = Quoting::RFC)
     @first_cell_in_row = true
   end
 
   # Yields a `CSV2::Row` to append a row. A newline is appended
   # to `IO` after the block exits.
   def row
-    yield Row.new(self, @separator, @quote_char, @quote_always)
+    yield Row.new(self, @separator, @quote_char, @quoting)
     @io << '\n'
     @first_cell_in_row = true
   end
@@ -82,7 +90,7 @@ class CSV2::Builder
       @io << @quote_char
     end
   end
-  
+
   private def append_cell
     @io << @separator unless @first_cell_in_row
     yield
@@ -94,12 +102,12 @@ class CSV2::Builder
     @builder : Builder
 
     # :nodoc:
-    def initialize(@builder, @separator : Char = DEFAULT_SEPARATOR, @quote_char : Char = DEFAULT_QUOTE_CHAR, @quote_always : Bool = false)
+    def initialize(@builder, @separator : Char = DEFAULT_SEPARATOR, @quote_char : Char = DEFAULT_QUOTE_CHAR, @quoting : Quoting = Quoting::RFC)
     end
 
     # Appends the given value to this row.
     def <<(value : String)
-      if @quote_always || needs_quotes?(value)
+      if needs_quotes?(value)
         @builder.quote_cell value
       else
         @builder.cell { |io| io << value }
@@ -108,7 +116,7 @@ class CSV2::Builder
 
     # ditto
     def <<(value : Nil | Bool | Char | Number | Symbol)
-      if @quote_always
+      if needs_quotes?(value)
         @builder.cell { |io|
           io << @quote_char
           io << value
@@ -142,13 +150,20 @@ class CSV2::Builder
     end
 
     private def needs_quotes?(value)
-      value.each_byte do |byte|
-        case byte.unsafe_chr
-        when @separator, @quote_char, '\n'
-          return true
+      case @quoting
+      when .rfc?
+        if value.is_a?(String)
+          value.each_byte do |byte|
+            case byte.unsafe_chr
+            when @separator, @quote_char, '\n'
+              return true
+            end
+          end
         end
+      when .all?
+        return true
       end
-      false
+      return false
     end
   end
 end
