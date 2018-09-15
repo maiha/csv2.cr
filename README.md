@@ -14,7 +14,7 @@ Add this to your application's `shard.yml`:
 dependencies:
   csv2:
     github: maiha/csv2.cr
-    version: 0.1.0
+    version: 0.2.0
 ```
 
 ## Usage
